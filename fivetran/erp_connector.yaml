@@ -1,0 +1,33 @@
+connector:
+  name: "CLV_Analytics_ERP_connector"
+  service: "azure_sql_db"
+  config:
+    host: "[HOST_ERP]"
+    port: 1433
+    database: "ERP"
+    user: "FIVETRAN_USER"
+    password: "{{PLACEHOLDER_SOURCE_DB_PWD}}"
+    update_method: "NATIVE_UPDATE" # Log-based CDC
+  destination:
+    service: "snowflake"
+    account: "[SNOWFLAKE_ACCOUNT_ID]"
+    database: "BRONZE"
+    schema: "BRONZE_ERP"
+  sync_frequency: "15" # Minutes
+  schemas:
+    - name: "ERP"
+      tables:
+        - name: "OE_ORDER_HEADERS_ALL"
+          enabled: true
+        - name: "OE_ORDER_LINES_ALL"
+          enabled: true
+        - name: "ADDRESSES"
+          enabled: true
+        - name: "CITY_TIER_MASTER"
+          enabled: true
+        - name: "MTL_SYSTEM_ITEMS_B"
+          enabled: true
+        - name: "CATEGORIES"
+          enabled: true
+        - name: "BRANDS"
+          enabled: true

@@ -1,0 +1,27 @@
+# DO NOT COMMIT TO GIT
+# If already committed, untrack: git rm --cached profiles.yml
+clv_analytics:
+  target: prod
+  outputs:
+    prod:
+      type: snowflake
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
+      password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD') }}"
+      role: {{PLACEHOLDER_TRANSFORMER_ROLE}}
+      database: SILVER
+      warehouse: {{PLACEHOLDER_TRANSFORM_WH}}
+      schema: SILVER_ERP       # default; overridden per model via +schema
+      threads: 4
+      client_session_keep_alive: false
+    dev:
+      type: snowflake
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
+      password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD') }}"
+      role: {{PLACEHOLDER_TRANSFORMER_ROLE}}
+      database: SILVER_DEV  # separate dev database
+      warehouse: {{PLACEHOLDER_TRANSFORM_WH}}
+      schema: SILVER_ERP
+      threads: 2
+      client_session_keep_alive: false

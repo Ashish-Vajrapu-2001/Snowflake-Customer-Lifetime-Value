@@ -1,0 +1,46 @@
+version: 2
+macros:
+  - name: generate_schema_name
+    description: >
+      Overrides dbt default schema name behaviour. In prod: uses custom_schema_name
+      directly (e.g. SILVER_ERP). In non-prod: prefixes with target name
+      (e.g. dev_SILVER_ERP) to isolate dev work from prod schemas.
+    arguments:
+      - name: custom_schema_name
+        type: string
+        description: Schema name from +schema config or model config()
+      - name: node
+        type: node
+        description: dbt node object (passed automatically by dbt)
+
+  - name: limit_dates_for_dev
+    description: >
+      In non-prod targets, adds a WHERE clause to limit date range scanned.
+      In prod, renders as nothing (no filter applied).
+    arguments:
+      - name: date_col
+        type: string
+        description: The date or timestamp column to apply the dev limit against
+
+  - name: email_structure_validation
+    description: >
+      Returns a CASE expression that evaluates to TRUE when the email column
+      matches standard email format, FALSE otherwise.
+    arguments:
+      - name: email_col
+        type: string
+        description: Column reference to validate (e.g. 'EMAIL')
+
+  - name: resume_warehouse
+    description: Resumes a suspended Snowflake warehouse. Used in on-run-start hooks.
+    arguments:
+      - name: warehouse
+        type: string
+        description: Warehouse name (e.g. target.warehouse)
+
+  - name: suspend_warehouse
+    description: Suspends a running Snowflake warehouse. Used in on-run-end hooks.
+    arguments:
+      - name: warehouse
+        type: string
+        description: Warehouse name (e.g. target.warehouse)

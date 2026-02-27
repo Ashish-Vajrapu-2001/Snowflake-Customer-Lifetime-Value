@@ -1,0 +1,38 @@
+snapshots:
+  - name: snp_crm__customers
+    relation: source('bronze_crm', 'CUSTOMERS')
+    config:
+      target_schema: SILVER_CRM
+      unique_key: CUSTOMER_ID
+      strategy: timestamp
+      updated_at: _FIVETRAN_SYNCED
+      hard_deletes: new_record
+      dbt_valid_to_current: "to_date('9999-12-31')"
+    description: "SCD2 snapshot of CUSTOMERS — tracks changes to customer profile"
+    columns:
+      - name: dbt_scd_id
+        description: "dbt-generated surrogate key — unique per snapshot row"
+      - name: CUSTOMER_ID
+        description: "Business key — not unique in SCD2"
+      - name: EMAIL
+        description: "Primary email address"
+      - name: PHONE
+        description: "Primary contact phone"
+      - name: FIRST_NAME
+        description: "Customer's given name"
+      - name: LAST_NAME
+        description: "Customer's family name"
+      - name: STATUS
+        description: "Account status"
+      - name: CUSTOMER_TYPE
+        description: "Customer classification"
+      - name: REGISTRATION_DATE
+        description: "Account creation timestamp"
+      - name: dbt_valid_from
+        description: "Timestamp when this version of the record became active"
+      - name: dbt_valid_to
+        description: "Timestamp when this version was superseded. 9999-12-31 = currently active"
+      - name: dbt_is_current
+        description: "True if this is the most recent version of the record"
+      - name: dbt_is_deleted
+        description: "True if the source row was hard-deleted"

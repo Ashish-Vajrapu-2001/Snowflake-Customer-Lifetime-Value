@@ -1,0 +1,124 @@
+version: 2
+models:
+  - name: stg_erp__oe_order_headers_all
+    description: "Staging model for Order Headers"
+    columns:
+      - name: ORDER_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: CUSTOMER_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: TOTAL_AMOUNT
+        data_tests:
+          - not_null:
+              config: {severity: error}
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "TOTAL_AMOUNT > 0"
+              config: {severity: error}
+      - name: ORDER_DATE
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "ORDER_DATE <= CURRENT_DATE()"
+              config: {severity: warn}
+
+  - name: stg_erp__oe_order_lines_all
+    description: "Staging model for Order Lines"
+    columns:
+      - name: LINE_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: ORDER_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: QUANTITY
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "QUANTITY > 0"
+              config: {severity: warn}
+
+  - name: stg_erp__city_tier_master
+    description: "Staging model for City Tiers"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['CITY', 'STATE']
+          config: {severity: error}
+    columns:
+      - name: CITY
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: STATE
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: TIER
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3]
+              config: {severity: warn}
+
+  - name: stg_erp__mtl_system_items_b
+    description: "Staging model for Products"
+    columns:
+      - name: INVENTORY_ITEM_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+
+  - name: stg_erp__categories
+    description: "Staging model for Categories"
+    columns:
+      - name: CATEGORY_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+
+  - name: stg_erp__brands
+    description: "Staging model for Brands"
+    columns:
+      - name: BRAND_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+
+  - name: snp_erp__addresses
+    description: "SCD2 Snapshot for Addresses"
+    columns:
+      - name: dbt_scd_id
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: ADDRESS_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: dbt_valid_from
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: dbt_is_current
+        data_tests:
+          - not_null:
+              config: {severity: error}

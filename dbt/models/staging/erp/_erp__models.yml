@@ -1,0 +1,139 @@
+version: 2
+models:
+  - name: stg_erp__oe_order_headers_all
+    description: "Silver layer order headers."
+    columns:
+      - name: ORDER_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: CUSTOMER_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: TOTAL_AMOUNT
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+              config: {severity: error}
+      - name: ORDER_DATE
+        data_tests:
+          - not_null:
+              config: {severity: error}
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                max_value: "CURRENT_DATE"
+              config: {severity: warn}
+
+  - name: stg_erp__oe_order_lines_all
+    description: "Silver layer order lines."
+    columns:
+      - name: LINE_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: ORDER_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: QUANTITY
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: false
+              config: {severity: error}
+
+  - name: stg_erp__addresses
+    description: "Silver layer addresses."
+    columns:
+      - name: ADDRESS_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: CUSTOMER_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: PHONE
+        data_tests:
+          - test_phone_format:
+              config: {severity: warn}
+
+  - name: stg_erp__city_tier_master
+    description: "Silver layer city tiers."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['CITY', 'STATE']
+          config: {severity: error}
+    columns:
+      - name: CITY
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: STATE
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: TIER
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3]
+              config: {severity: warn}
+
+  - name: stg_erp__categories
+    description: "Silver layer categories."
+    columns:
+      - name: CATEGORY_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: CATEGORY_NAME
+        data_tests:
+          - not_null:
+              config: {severity: error}
+
+  - name: stg_erp__brands
+    description: "Silver layer brands."
+    columns:
+      - name: BRAND_ID
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: BRAND_NAME
+        data_tests:
+          - not_null:
+              config: {severity: error}
+
+  - name: snp_erp__mtl_system_items_b
+    description: "SCD2 snapshot of products."
+    columns:
+      - name: dbt_scd_id
+        data_tests:
+          - unique:
+              config: {severity: error}
+          - not_null:
+              config: {severity: error}
+      - name: INVENTORY_ITEM_ID
+        data_tests:
+          - not_null:
+              config: {severity: error}
+      - name: STATUS
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Active', 'Inactive', 'Discontinued']
+              config: {severity: warn}

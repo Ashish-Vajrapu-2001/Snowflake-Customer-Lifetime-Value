@@ -1,0 +1,256 @@
+version: 2
+sources:
+  - name: bronze_erp
+    database: "{{ env_var('DBT_BRONZE_DB', 'BRONZE') }}"
+    schema: BRONZE_ERP
+    config:
+      loaded_at_field: _FIVETRAN_SYNCED
+      freshness:
+        warn_after: {count: 60, period: minute}
+        error_after: {count: 4, period: hour}
+    tables:
+      - name: OE_ORDER_HEADERS_ALL
+        description: "Master record for customer orders containing header-level information."
+        columns:
+          - name: ORDER_ID
+            description: "Unique order identifier"
+          - name: ORDER_NUMBER
+            description: "Business order reference"
+          - name: CUSTOMER_ID
+            description: "Customer reference"
+          - name: ORDER_DATE
+            description: "Order placement date"
+          - name: ORDER_STATUS
+            description: "Order lifecycle status"
+          - name: PAYMENT_METHOD
+            description: "Payment instrument"
+          - name: PAYMENT_STATUS
+            description: "Payment state"
+          - name: SUBTOTAL_AMOUNT
+            description: "Pre-discount total"
+          - name: DISCOUNT_AMOUNT
+            description: "Discount applied"
+          - name: TAX_AMOUNT
+            description: "Tax amount"
+          - name: SHIPPING_AMOUNT
+            description: "Shipping charges"
+          - name: TOTAL_AMOUNT
+            description: "Final order total"
+          - name: CURRENCY_CODE
+            description: "ISO currency code"
+          - name: SHIPPING_ADDRESS_ID
+            description: "Delivery address"
+          - name: BILLING_ADDRESS_ID
+            description: "Billing address"
+          - name: PROMISED_DATE
+            description: "Promised delivery"
+          - name: SHIPPED_DATE
+            description: "Shipment date"
+          - name: DELIVERED_DATE
+            description: "Delivery date"
+          - name: CANCELLATION_REASON
+            description: "Cancel reason"
+          - name: ORDER_SOURCE
+            description: "Order channel"
+          - name: ORG_ID
+            description: "Organization ID"
+          - name: CREATED_BY
+            description: "Creator"
+          - name: CREATED_DATE
+            description: "Creation timestamp"
+          - name: LAST_UPDATE_DATE
+            description: "Update timestamp"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+
+      - name: OE_ORDER_LINES_ALL
+        description: "Individual line items within an order with product details."
+        columns:
+          - name: LINE_ID
+            description: "Unique line identifier"
+          - name: ORDER_ID
+            description: "Parent order"
+          - name: LINE_NUMBER
+            description: "Line sequence"
+          - name: PRODUCT_ID
+            description: "Product reference"
+          - name: SKU
+            description: "Stock Keeping Unit"
+          - name: PRODUCT_NAME
+            description: "Product name"
+          - name: QUANTITY
+            description: "Units ordered"
+          - name: UNIT_PRICE
+            description: "Price per unit"
+          - name: DISCOUNT_PERCENT
+            description: "Discount %"
+          - name: DISCOUNT_AMOUNT
+            description: "Discount value"
+          - name: TAX_AMOUNT
+            description: "Tax amount"
+          - name: LINE_AMOUNT
+            description: "Line total"
+          - name: LINE_STATUS
+            description: "Line status"
+          - name: WAREHOUSE_ID
+            description: "Warehouse"
+          - name: PROMISED_DATE
+            description: "Promised date"
+          - name: SHIPPED_DATE
+            description: "Ship date"
+          - name: DELIVERED_DATE
+            description: "Delivery date"
+          - name: RETURN_REASON
+            description: "Return reason"
+          - name: CREATED_DATE
+            description: "Created"
+          - name: LAST_UPDATE_DATE
+            description: "Updated"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+
+      - name: ADDRESSES
+        description: "Customer shipping and billing addresses."
+        columns:
+          - name: ADDRESS_ID
+            description: "Unique address ID"
+          - name: CUSTOMER_ID
+            description: "Customer owner"
+          - name: ADDRESS_TYPE
+            description: "Address purpose"
+          - name: ADDRESS_NAME
+            description: "Friendly name"
+          - name: STREET_LINE_1
+            description: "Street address"
+          - name: STREET_LINE_2
+            description: "Address line 2"
+          - name: LANDMARK
+            description: "Nearby landmark"
+          - name: CITY
+            description: "City"
+          - name: STATE
+            description: "State"
+          - name: PINCODE
+            description: "Postal code"
+          - name: COUNTRY
+            description: "Country"
+          - name: PHONE
+            description: "Contact phone"
+          - name: IS_DEFAULT
+            description: "Default flag"
+          - name: IS_ACTIVE
+            description: "Active flag"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+
+      - name: CITY_TIER_MASTER
+        description: "Reference table classifying cities into tiers."
+        columns:
+          - name: CITY
+            description: "City (composite PK)"
+          - name: STATE
+            description: "State (composite PK)"
+          - name: TIER
+            description: "City tier (1,2,3)"
+          - name: REGION
+            description: "Geographic region"
+          - name: IS_METRO
+            description: "Metro flag"
+          - name: CREATED_DATE
+            description: "Created"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+
+      - name: MTL_SYSTEM_ITEMS_B
+        description: "Master catalog of products."
+        columns:
+          - name: INVENTORY_ITEM_ID
+            description: "Unique product ID"
+          - name: SKU
+            description: "Stock Keeping Unit"
+          - name: ITEM_NAME
+            description: "Product name"
+          - name: DESCRIPTION
+            description: "Description"
+          - name: CATEGORY_ID
+            description: "Category"
+          - name: BRAND_ID
+            description: "Brand"
+          - name: UNIT_OF_MEASURE
+            description: "UOM"
+          - name: LIST_PRICE
+            description: "List price"
+          - name: COST
+            description: "Product cost"
+          - name: MRP
+            description: "MRP"
+          - name: STATUS
+            description: "Status"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+
+      - name: CATEGORIES
+        description: "Hierarchical product category structure."
+        columns:
+          - name: CATEGORY_ID
+            description: "Unique category ID"
+          - name: CATEGORY_NAME
+            description: "Category name"
+          - name: CATEGORY_CODE
+            description: "Category code"
+          - name: PARENT_CATEGORY_ID
+            description: "Parent category"
+          - name: LEVEL
+            description: "Hierarchy level"
+          - name: DISPLAY_ORDER
+            description: "Sort order"
+          - name: IS_ACTIVE
+            description: "Active flag"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+
+      - name: BRANDS
+        description: "Master list of brands with tier classification."
+        columns:
+          - name: BRAND_ID
+            description: "Unique brand ID"
+          - name: BRAND_NAME
+            description: "Brand name"
+          - name: BRAND_CODE
+            description: "Brand code"
+          - name: BRAND_TIER
+            description: "Brand tier"
+          - name: ORIGIN_COUNTRY
+            description: "Origin country"
+          - name: IS_ACTIVE
+            description: "Active flag"
+          - name: LAST_MODIFIED_DATE
+            description: "Last modification timestamp (audit trail)"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran sync timestamp"
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"

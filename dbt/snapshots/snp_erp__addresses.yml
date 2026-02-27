@@ -1,0 +1,40 @@
+snapshots:
+  - name: snp_erp__addresses
+    relation: source('bronze_erp', 'ADDRESSES')
+    config:
+      target_schema: SILVER_ERP
+      unique_key: ADDRESS_ID
+      strategy: timestamp
+      updated_at: _FIVETRAN_SYNCED
+      hard_deletes: new_record
+      dbt_valid_to_current: "to_date('9999-12-31')"
+    description: "SCD2 snapshot of ADDRESSES — tracks changes to address details"
+    columns:
+      - name: dbt_scd_id
+        description: "dbt-generated surrogate key — unique per snapshot row"
+      - name: ADDRESS_ID
+        description: "Business key — not unique in SCD2"
+      - name: CUSTOMER_ID
+        description: "Customer owner"
+      - name: CITY
+        description: "City"
+      - name: STATE
+        description: "State"
+      - name: STREET_LINE_1
+        description: "Street address"
+      - name: STREET_LINE_2
+        description: "Address line 2"
+      - name: LANDMARK
+        description: "Nearby landmark"
+      - name: PINCODE
+        description: "Postal code"
+      - name: PHONE
+        description: "Contact phone"
+      - name: dbt_valid_from
+        description: "Timestamp when this version of the record became active"
+      - name: dbt_valid_to
+        description: "Timestamp when this version was superseded. 9999-12-31 = currently active"
+      - name: dbt_is_current
+        description: "True if this is the most recent version of the record"
+      - name: dbt_is_deleted
+        description: "True if the source row was hard-deleted"

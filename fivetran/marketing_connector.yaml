@@ -1,0 +1,21 @@
+connector:
+  name: "CLV_Analytics_MARKETING_connector"
+  service: "azure_sql_db"
+  config:
+    host: "[HOST_MKT]"
+    port: 1433
+    database: "MARKETING"
+    user: "FIVETRAN_USER"
+    password: "{{PLACEHOLDER_SOURCE_DB_PWD}}"
+    update_method: "TELEPORT" # Log-based CDC
+  destination:
+    service: "snowflake"
+    account: "[SNOWFLAKE_ACCOUNT_ID]"
+    database: "BRONZE"
+    schema: "BRONZE_MARKETING"
+  sync_frequency: "1440" # Minutes
+  schemas:
+    - name: "MARKETING"
+      tables:
+        - name: "MARKETING_CAMPAIGNS"
+          enabled: true
